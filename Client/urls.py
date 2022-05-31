@@ -6,4 +6,5 @@ urlpatterns = [
     path('add', add_client, name="add-client"),
     path('<int:pk>/edit/', edit_client, name="edit-client"),
     path('<int:pk>/delete/', delete_client, name="delete-client"),
+    path('permissions/', permission, name="permission-client"),
 ]
