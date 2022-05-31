@@ -1,10 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+{% block main %}
+<form method="post">
+<div class="row">
+    <div class="col-lg-10">
+        <div class="mb-3">
+        <label class="form-label text-uppercase">Role/Group Name</label>
+         <input class="form-control" required placeholder="Role/Group Name" name="group_name">
+        </div>
+    </div>
+</div>
+    <div class="row">
+        <div class="col-lg-6">
+            <label class="form-label text-uppercase">Select Permissions</label>
+
+                {% csrf_token %}
+                {% for perm in permission_set %}
+                    <div class="mb-3">
+                        <label style="margin-left: 10px" for="email"
+                               class="form-label text-uppercase"><small>{{ perm.title }}</small></label>
+                        {% for permission in perm.permissions %}
+                            <div style="margin-left: 20px" class="form-check form-switch">
+                                <input data-value="{{ permission.codename }}"
+                                       data-name="{{ permission.name }}"
+                                       data-ct="{{ perm.ct }}"
+{#                                       name="{{ permission.codename }}"#}
+                                       class="form-check-input" type="checkbox"
+                                       id="{{ permission.codename }}">
+                                <label class="form-check-label"
+                                       for="{{ permission.codename }}">{{ permission.name }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+        </div>
+        <div style="border-left: 1px solid" class="col-lg-6">
+            <label class="form-label text-uppercase">Selected Permissions</label>
+            {% for perm in permission_set %}
+                <div class="mb-3">
+                    <label id="{{ perm.ct }}" style="margin-left: 10px; display: none;" for="email"
+                           class="form-label text-uppercase"><small>{{ perm.title }}</small></label>
+                    <div class="{{ perm.ct }}">
+
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-10">
+            <button class="btn btn-success pull-right">Submit</button>
+            {#                <a href="{{ back_url }}">Back</a>#}
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block extra %}
+    <script>
+        $(".form-check-input").on("change", function () {
+            let input = $(this)
+            let ct=$(`.${input.data("ct")}`)
+            if (input.is(":checked")) {
+                ct.append(`<li style="margin-left: 20px" class="li-${ input.data('value')}">${input.data("name")}
+                                <input hidden name="${input.data("ct")}" value="${input.data('value')}"/>
+                            </li>`)
+            }
+            else {
+                ct.find(`.li-${ input.data('value')}`).remove()
+            }
+            if(ct.find("li").length===0){
+                ct.siblings("label").hide()
+            }
+            else {
+                ct.siblings("label").show()
+            }
+        })
+    </script>
+{% endblock %}

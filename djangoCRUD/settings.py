@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'Client',
     'django_tables2',
+    "Permissions"
 
 ]
 
